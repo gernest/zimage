@@ -285,18 +285,10 @@ pub const ImageFuncs = struct {
     opaque_fn: ?fn (self: *ImageFuncs) bool,
     set_fn: ?fn (self: *ImageFuncs, x: isize, y: isize, c: color.ModelType) void,
 
-    //  sets the sub_image field. This is a workaround after failing to express
-    // the interface for returning sub image.
-    //
-    // The desired API is
-    //   sub_image: ?fn (self: *ImageFuncs, r: Rectangle) Image,
-    // However that code won't compile. unless we return *Image. which makes
-    // matters even more complicated because I don't know how to make that
-    // possible yet.
-    //
+    // calculate subimage from rectangle r and assigns the resulting image to
+    // img_ptr
     // TODO: Fix the API.
-    set_sub_image: ?fn (self: *ImageFuncs, r: Rectangle) void,
-    sub_image: ?*Image,
+    set_sub_image: ?fn (self: *ImageFuncs, r: Rectangle, img_ptr: *Image) void,
 };
 
 /// PalettedImage is an image whose colors may come from a limited palette.
@@ -345,7 +337,6 @@ pub const RGBA = struct {
                 .opaque_fn = opaqueFn,
                 .set_fn = setFn,
                 .set_sub_image = subImageFn,
-                .sub_image = null,
             },
         };
     }
@@ -379,10 +370,10 @@ pub const RGBA = struct {
         return self.opaque();
     }
 
-    pub fn subImageFn(r: *ImageFuncs, rec: Rectangle) void {
+    pub fn subImageFn(r: *ImageFuncs, rec: Rectangle, img_ptr: *Image) void {
         const self = @fieldParentPtr(RGBA, "image_fn", r);
         var img = self.subImage(rec).image();
-        r.sub_image = &img;
+        img_ptr.* = img;
     }
 
     pub fn setFn(r: *ImageFuncs, x: isize, y: isize, c: color.ModelType) void {
