@@ -1,5 +1,5 @@
 const image = @import("./image.zig");
-const t = @import("../testing/index.zig");
+const t = @import("./util/index.zig");
 const std = @import("std");
 
 fn in(f: image.Rectangle, g: image.Rectangle) bool {
@@ -144,7 +144,7 @@ test "Rectangle" {
     }
 }
 
-const TestImage = struct{
+const TestImage = struct {
     name: []const u8,
     image: image.Image,
     mem: []u8,
