@@ -285,9 +285,9 @@ pub const ImageFuncs = struct {
     opaque_fn: ?fn (self: *ImageFuncs) bool,
     set_fn: ?fn (self: *ImageFuncs, x: isize, y: isize, c: color.ModelType) void,
 
-    // calculate subimage from rectangle r and assigns the resulting image to
-    // img_ptr
-    // TODO: Fix the API.
+    /// calculate subimage from rectangle r and assigns the resulting image to
+    /// img_ptr
+    /// TODO: Fix the API.
     set_sub_image: ?fn (self: *ImageFuncs, r: Rectangle, img_ptr: *Image) void,
 };
 
