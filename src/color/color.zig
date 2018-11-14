@@ -1,6 +1,6 @@
 /// Color can convert itself to alpha-premultiplied 16-bits per channel RGBA.
 /// The conversion may be lossy.
-pub const Color = struct{
+pub const Color = struct {
     rgb: Value,
 };
 
@@ -11,7 +11,7 @@ pub const Color = struct{
 ///
 /// An alpha-premultiplied color component c has been scaled by alpha (a),
 /// so has valid values 0 <= c <= a.
-pub const Value = struct{
+pub const Value = struct {
     r: u32,
     g: u32,
     b: u32,
@@ -20,7 +20,7 @@ pub const Value = struct{
 
 /// Model can convert any Color to one from its own color model. The conversion
 /// may be lossy.
-pub const Model = struct{
+pub const Model = struct {
     convert: fn (c: ModelType) Color,
 };
 
@@ -29,7 +29,7 @@ pub const Model = struct{
 ///
 /// An alpha-premultiplied color component C has been scaled by alpha (A), so
 /// has valid values 0 <= C <= A.
-pub const RGBA = struct{
+pub const RGBA = struct {
     r: u8,
     g: u8,
     b: u8,
@@ -61,7 +61,7 @@ pub const RGBA = struct{
 /// each of red, green, blue and alpha.
 /// An alpha-premultiplied color component C has been scaled by alpha (A), so
 /// has valid values 0 <= C <= A.
-pub const RGBA64 = struct{
+pub const RGBA64 = struct {
     r: u16,
     g: u16,
     b: u16,
@@ -82,7 +82,7 @@ pub const RGBA64 = struct{
 };
 
 /// NRGBA represents a non-alpha-premultiplied 32-bit color.
-pub const NRGBA = struct{
+pub const NRGBA = struct {
     r: u8,
     g: u8,
     b: u8,
@@ -112,7 +112,7 @@ pub const NRGBA = struct{
     }
 };
 
-pub const NBRGBA64 = struct{
+pub const NBRGBA64 = struct {
     r: u16,
     g: u16,
     b: u16,
@@ -142,7 +142,7 @@ pub const NBRGBA64 = struct{
 };
 
 /// Alpha represents an 8-bit alpha color.
-pub const Alpha = struct{
+pub const Alpha = struct {
     a: u8,
 
     fn toColor(c: Alpha) Color {
@@ -160,7 +160,7 @@ pub const Alpha = struct{
     }
 };
 
-pub const Alpha16 = struct{
+pub const Alpha16 = struct {
     a: u16,
 
     fn toColor(c: Alpha16) Color {
@@ -179,7 +179,7 @@ pub const Alpha16 = struct{
 };
 
 /// Gray represents an 8-bit grayscale color.
-pub const Gray = struct{
+pub const Gray = struct {
     y: u8,
 
     fn toColor(c: Gray) Value {
@@ -194,7 +194,7 @@ pub const Gray = struct{
     }
 };
 
-pub const Gray16 = struct{
+pub const Gray16 = struct {
     y: u16,
 
     fn toColor(c: Gray16) Value {
@@ -216,7 +216,7 @@ pub const Alpha16Model = Model{ .convert = ModelType.alpha16Model };
 pub const GrayModel = Model{ .convert = ModelType.grayModel };
 pub const Gray16Model = Model{ .convert = ModelType.gray16Model };
 
-pub const ModelType = union(enum){
+pub const ModelType = union(enum) {
     rgba: RGBA,
     rgba64: RGBA64,
     nrgba: NRGBA,
@@ -398,11 +398,11 @@ pub const White = Gray{ .y = 0xffff };
 pub const Transparent = Alpha{ .a = 0 };
 pub const Opaque = Alpha16{ .a = 0xffff };
 
-/// sqDiff returns the squared-difference of x and y, shifted by 2 so that
+/// sqdiff returns the squared-difference of x and y, shifted by 2 so that
 /// adding four of those won't overflow a uint32.
 ///
 /// x and y are both assumed to be in the range [0, 0xffff].
-fn sqDiff(x: u32, y: u32) u32 {
+pub fn sqdiff(x: u32, y: u32) u32 {
     // The canonical code of this function looks as follows:
     //
     //    var d uint32
@@ -424,6 +424,9 @@ fn sqDiff(x: u32, y: u32) u32 {
     //
     // Considering these properties and the fact that this function is
     // called in the hot paths (x,y loops), it is reduced to the below code
-    const d = x - y;
-    return (d * d) >> 2;
+    var d: u32 = undefined;
+    _ = @subWithOverflow(u32, x, y, &d);
+    var v: u32 = undefined;
+    _ = @mulWithOverflow(u32, d, d, &v);
+    return v >> 2;
 }

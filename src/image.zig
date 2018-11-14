@@ -1,7 +1,7 @@
-const color = @import("./color/index.zig");
+const color = @import("./color/color.zig");
 
 /// A Point is an X, Y coordinate pair. The axes increase right and down.
-pub const Point = struct{
+pub const Point = struct {
     x: isize,
     y: isize,
 
@@ -50,7 +50,7 @@ pub const Point = struct{
     }
 };
 
-pub const Rectangle = struct{
+pub const Rectangle = struct {
     min: Point,
     max: Point,
 
@@ -256,7 +256,7 @@ pub const Rectangle = struct{
     }
 };
 
-pub const Config = struct{
+pub const Config = struct {
     color_model: color.Model,
     width: isize,
     height: isize,
@@ -264,7 +264,7 @@ pub const Config = struct{
 
 /// Image is a finite rectangular grid of color.Color values taken from a color
 /// model.
-pub const Image = struct{
+pub const Image = struct {
     /// color_model is the Image's color model.
     color_model: color.Model,
 
@@ -277,7 +277,7 @@ pub const Image = struct{
 
 /// ImageFuncs are futcion which statisfies different interfaces. Some are
 /// optional others are a must.
-pub const ImageFuncs = struct{
+pub const ImageFuncs = struct {
     /// at returns the color of the pixel at (x, y).
     /// At(Bounds().Min.X, Bounds().Min.Y) returns the upper-left pixel of the grid.
     /// At(Bounds().Max.X-1, Bounds().Max.Y-1) returns the lower-right one.
@@ -304,12 +304,12 @@ pub const ImageFuncs = struct{
 /// then m.At(x, y) should be equivalent to p[m.ColorIndexAt(x, y)]. If m's
 /// color model is not a color.Palette, then ColorIndexAt's behavior is
 /// undefined.
-pub const PalettedImage = struct{
+pub const PalettedImage = struct {
     image: Image,
     color_index_at: fn (x: usize, y: usize) u8,
 };
 
-pub const Pix = struct{
+pub const Pix = struct {
     r: u8,
     g: u8,
     b: u8,
@@ -324,7 +324,7 @@ pub const Pix = struct{
     }
 };
 
-pub const RGBA = struct{
+pub const RGBA = struct {
     /// Pix holds the image's pixels, in R, G, B, A order. The pixel at
     /// (x, y) starts at Pix[(y-Rect.Min.Y)*Stride + (x-Rect.Min.X)*4].
     pix: []u8,
