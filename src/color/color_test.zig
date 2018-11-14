@@ -158,7 +158,7 @@ test "sqdiff" {
     for (test_cases) |v, idx| {
         const got = color.sqdiff(v.x, v.y);
         if (got != v.expect) {
-            _ = t.terrorf("#{} want 0{x} got 0x{x}", idx, v.expect, got);
+            try t.terrorf("#{} want 0{x} got 0x{x}", idx, v.expect, got);
         }
     }
 }
